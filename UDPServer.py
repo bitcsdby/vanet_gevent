@@ -20,7 +20,7 @@ import logging
 
 class VANETDatagramServer(DatagramServer):
     def handle(self, data, address):
-        print 'from %s: got %r' % (address[0], data)
+        #print 'from %s: got %r' % (address[0], data)
         #self.sendto('reply: ' + data, address)
         vanet.packet_handler(self.socket, address, data, 'udp')
 

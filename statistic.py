@@ -22,7 +22,7 @@ class Statistic:
         self.averagespeed = 0.  ##  total 24 hour averge speed
 
     #def getdatafromweb(self, start, count, url, dspath, dbpath):
-     def unpackdata(self):
+    def unpackdata(self):
 
         self.dbitems.reverse()
 
@@ -73,8 +73,11 @@ class Statistic:
 ## 考虑出现三分钟以上的非法数据  就认为是两段路程
 ## 两段路程的考虑
     def runstatistic(self):
+    	if  len(self.dbitems) == 0:
+    		print 'No data!!!!'
+    		return 
 
-        unpackdata();
+        self.unpackdata();
 
         l = len(self.dsitems)
         maxspeed = 0.0      ## for maxspeed
