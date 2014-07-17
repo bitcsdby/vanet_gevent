@@ -21,10 +21,10 @@ accdict = {}
 
 # process the standard packet
 def packet_handler(client_socket, address, data_packet, stype='tcp'):# parse packet
-    print data_packet
+    #print data_packet
     pack_len, pack_type, pack_extras = struct.unpack('HBB', data_packet[:4])
     data_content = data_packet[4:]
-    print 'length: %d, type: %d, extras: %d' % (pack_len, pack_type, pack_extras)
+    #print 'length: %d, type: %d, extras: %d' % (pack_len, pack_type, pack_extras)
 
     res_data = ''  # process packet
     if pack_type == 10:		# login
@@ -55,7 +55,7 @@ def packet_handler(client_socket, address, data_packet, stype='tcp'):# parse pac
             post_data = json.dumps(post_data)
             res_data = call_http_api(url, post_data, 'post')
     elif pack_type == 12:  # obd data upload
-        print 'obd data upload'
+        #print 'obd data upload'
         url = ConfigAPI['base_url'] + 'vanet.obd.setBaseData'
         fmt = '=QBHBBBHBBBHBHHBHHBBB'
         fmt_size = struct.calcsize(fmt)
@@ -98,15 +98,23 @@ def packet_handler(client_socket, address, data_packet, stype='tcp'):# parse pac
                 	print 'Still Stop!!!!!!!!'
                 	accdict[access_token] = -1;
                 if accdict[access_token] >= 20:
-                    # stop over 1 minute, call api to get last trip data
-                    # call api to pull data
-                    print  'The car is stopped !!!!!!!!!!!!!'
-                    s = Statistic();
-                    # call func to statistic data
-                    #s.dbitems = call_http_api(xxx);
-                    sitem = s.runstatistic();
-                    # call api to push data
-                    accdict[access_token] = -1;
+                	accdict[access_token] = -1
+                	eptdict = {}
+                	urlpull = ConfigAPI['base_url'] + 'vanet.obd.getTripobddata'
+                	eptdict = json.loads(call_http_api(urlpull,json.dumps(eptdict),'get'))
+                	print  'The car is stopped !!!!!!!!!!!!!'
+                	s = Statistic()
+                	if eptdict.has_key('msg'):
+                		if type(eptdict['msg']) == type({}):
+                			s.dbitems = eptdict['msg']['data']
+                			sitem = s.runstatistic()
+                			sitem = json.dumps(sitem)
+                			urlpush = ConfigAPI['base_url'] + 'vanet.obd.addTrip'
+                			res_data = call_http_api(urlpush,sitem,'post')
+                			print res_data
+                		else:
+                			print 'Server Error! No Data Info !!!!!!!!!'
+                    
             else:
                 accdict[access_token] = 0; # valid data
             #print post_data

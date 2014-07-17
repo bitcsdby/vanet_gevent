@@ -160,23 +160,17 @@ class Statistic:
             self.oilconsumption = consumptionsum / l ;
 
         print self.clrdistance,self.dsitems[0].clr_dist
-
-        print '急刹车次数', self.tobrakes
-        print '急踩油门次数', self.tostepongas
-        print '高速巡航时间', self.tohighspeed / l * 100, '%'
-        print '怠速时间', self.toidling / l * 100, '%'
-        print '行驶里程',  '总里程', self.mildistance + self.clrdistance - \
-                                    self.dsitems[0].mil_dist - self.dsitems[0].clr_dist, 'Km', '  '\
-                          '故障', self.mildistance - self.dsitems[0].mil_dist, '正常', self.clrdistance - self.dsitems[0].clr_dist
-        print '平均速度', self.averagespeed, 'Km/h'
-        print '平均油耗', self.oilconsumption, 'L/ 100km'
-        print '驾驶评分', self.drivingscore
-        print ''
-        #print '行驶里程', self
-        ## statistic with dsitems
-        # print self.dbitems
-
-        # clean memory
+        
+        post_data = {'miles': self.mildistance + self.clrdistance - self.dsitems[0].mil_dist - self.dsitems[0].clr_dist,
+					 'speed': self.averagespeed,
+					 'brakes': self.tobrakes,
+					 'overspeed': self.tohighspeed / l * 100,
+					 'idling': self.toidling / l * 100,
+					 'rapid_acceleration': self.tostepongas,
+					 'average_fuel': self.oilconsumption,
+					 'grade': self.drivingscore}
+        
+        return post_data
 
 
 if __name__ == '__main__':

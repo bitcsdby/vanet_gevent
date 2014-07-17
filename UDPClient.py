@@ -29,9 +29,16 @@ sock = socket.socket(type=socket.SOCK_DGRAM)
 #sock.connect(address)
 print 'Sending %s bytes to %s:%s' % ((len(message2),) + address)
 
+i = 0;
+
 while True:
-	sock.sendto(message2, address)
+	for i < 20:
+		i += 1;
+		sock.sendto(message1,address)
+	else:
+		i = 0
+		sock.sendto(message2, address)
 	#data, address = sock.recvfrom(8192)
 	#print '%s:%s: got %r' % (address + (data, ))
-	time.sleep(1)
+	time.sleep(2)
 	
