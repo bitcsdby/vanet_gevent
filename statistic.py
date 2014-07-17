@@ -8,7 +8,7 @@ import pickle
 
 
 class Statistic:
-    def __init__(self):
+    def __init__(self,token):
         self.dbitems = []
         self.dsitems = []
         self.tobrakes = 0  ## time of brakes
@@ -20,22 +20,31 @@ class Statistic:
         self.oilconsumption = 0.  ## total energy consumption
         self.drivingscore = 0.  ## driving score
         self.averagespeed = 0.  ##  total 24 hour averge speed
+        self.access_token = token
+        self.ftime = ''
+        self.etime = ''
 
     #def getdatafromweb(self, start, count, url, dspath, dbpath):
     def unpackdata(self):
-
-        self.dbitems.reverse()
-
+    	self.dbitems.reverse()
+	self.ftime = self.dbitems[0]['create_time']
+        self.etime = self.dbitems[len(self.dbitems)-1]['create_time']
+		
         for item in self.dbitems:
             #print int(item['VSS'])
+            #print item['create_time']
             if int(item['VSS']) != 0x88:
                 dsitem = Rawdatastructure(item)
                 self.dsitems.append(dsitem)
 
             #else:
                #print 'invalid dbitem' logging
+        
         self.dsitems.sort(key=lambda x: x.obdid);
-
+        #self.ftime = self.dbitems[0]['create_time']
+        #self.etime = self.dbitems[len(dbitems)-1]['create_time']
+        
+        #print self.ftime,self.etime
 
     def getdatafromlocal(self, dspath, dbpath):
         with open(dspath, 'rb') as dsfile:
@@ -88,7 +97,7 @@ class Statistic:
         id_load_pct = 0;
 
         for i in range(l-1):
-            self.dsitems[i].printvalues()
+            #self.dsitems[i].printvalues()
             # print self.dsitems[i].vss
             #print type(self.dsitems[i].load_pct)
             #print 'MAF', self.dsitems[i].maf
@@ -159,16 +168,21 @@ class Statistic:
             self.averagespeed = speedsum / l ;
             self.oilconsumption = consumptionsum / l ;
 
-        print self.clrdistance,self.dsitems[0].clr_dist
+        #print self.clrdistance,self.dsitems[0].clr_dist
         
-        post_data = {'miles': self.mildistance + self.clrdistance - self.dsitems[0].mil_dist - self.dsitems[0].clr_dist,
+        post_data = {'access_token':self.access_token,
+        		
+        'miles': self.mildistance + self.clrdistance - self.dsitems[0].mil_dist - self.dsitems[0].clr_dist,
 					 'speed': self.averagespeed,
 					 'brakes': self.tobrakes,
 					 'overspeed': self.tohighspeed / l * 100,
 					 'idling': self.toidling / l * 100,
 					 'rapid_acceleration': self.tostepongas,
 					 'average_fuel': self.oilconsumption,
-					 'grade': self.drivingscore}
+					 'grade': self.drivingscore,
+					 'f_time': self.ftime,
+					 'e_time': self.etime
+					 }
         
         return post_data
 

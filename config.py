@@ -14,7 +14,7 @@ ConfigServer = {'tcp_host': '0.0.0.0',
 
 
 #ConfigAPI = {'base_url':'http://vanet.fenhetech.com/api.php?p='}
-ConfigAPI = {'base_url': 'http://www.ecloudan.com/api.php?p='}
+ConfigAPI = {'base_url': 'http://www.ecloudan.com/app/api.php?p='}
 #ConfigAPI = {'base_url':'http://localhost/vanet/vanet/api.php?p='}
 if __name__ == '__main__':
     print ConfigServer
